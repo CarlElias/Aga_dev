@@ -1,0 +1,41 @@
+{% extends "app/master.html" %}
+
+{% block content %}
+{% load static %}
+
+    <div id="main" class="container h-100">
+        <h1 class="card-title">{{etudeb.titre}}</h5>
+            <h2 class="card-subtitle mb-2 text-body-secondary">{{etudeb.sous_titre}}</h6>
+                <p class="card-text mt-3">
+                    {{etudeb.contenu}}
+                </p>
+                <div class="h-100 mt-5 rounded border p-2 w-100">
+                    <h4 class="mb-5">
+                        Commentaires
+                    </h3>
+                    <div class="w-50" style="padding-left: 20px; padding-bottom: 15px;">
+                        <h5>Identifiant</h5>
+                        <p style="font-size: 15px;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat soluta necessitatibus
+                            asperiores ipsam in modi voluptatem ad cupiditate iste? Earum voluptatibus ut eligendi,
+                            dicta quas rerum quod blanditiis unde atque.</p>
+
+                    </div>
+                    
+                    <form class="was-validated">
+                        <div class="mb-3">
+                            <label for="validationTextarea" class="form-label">Entrez votre commentaire</label>
+                            <textarea class="form-control" id="validationTextarea" placeholder="Required example textarea" required></textarea>
+                            <div class="invalid-feedback">
+                                Please enter a message in the textarea.
+                            </div>
+                        </div>
+                      
+                        <div class="mb-3">
+                            <button class="btn btn-primary" type="submit" disabled>Submit form</button>
+                        </div>
+                      </form>
+
+                </div>
+    </div>
+
+{% endblock %}

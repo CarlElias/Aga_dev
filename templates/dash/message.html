@@ -1,0 +1,169 @@
+{% extends "dash/master.html" %}
+
+{% block titre %}
+    <title>Admin | Message</title>
+    <style>
+        .hover-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            z-index: 1;
+        }
+        
+        .etude-titre:hover + .hover-content {
+            display: block;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function closeAlert() {
+            var alertBox = document.querySelector('.alert-box');
+            alertBox.style.display = 'none';
+        }
+
+        const etudeTitres = document.querySelectorAll('.etude-titre');
+        etudeTitres.forEach(etudeTitre => {
+            etudeTitre.addEventListener('mousemove', e => {
+                const hoverContent = etudeTitre.nextElementSibling;
+                hoverContent.style.top = `${e.clientY}px`;
+                hoverContent.style.left = `${e.clientX}px`;
+            });
+        });
+    </script>
+    
+
+
+{% endblock %}
+
+{% block active_msg %} active {% endblock %}
+{% block coll_dash %} class="collapsed" {% endblock %}
+{% block coll_typ_th_b %} class="collapsed" {% endblock %}
+{% block coll_bibilque %} class="collapsed" {% endblock %}
+{% block coll_ann %} class="collapsed" {% endblock %}
+
+{% block content %}
+{% load static %}
+
+<!-- ========== tab components start ========== -->
+<section class="tab-components">
+    <div class="container-fluid">
+      <!-- ========== title-wrapper start ========== -->
+      <div class="title-wrapper pt-30">
+
+
+        {% if messages %}
+            <div class="alert-box success-alert pl-100">
+                <button style="border: none;" class="close-btn" onclick="closeAlert()">
+                    <div class="left">
+                        <h5 class="text-bold">X</h5>
+                    </div>
+                </button>
+                <div class="alert">
+                    <p class="text-medium">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </p>
+                </div>
+                
+            </div>
+        {% endif %}
+
+
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <div class="title mb-30">
+              <h2>Messages</h2>
+            </div>
+          </div>
+          
+          <!-- end col -->
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- ========== title-wrapper end ========== -->
+
+      <!-- ========== form-elements-wrapper start ========== -->
+      <div class="tables-wrapper">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card-style mb-30">
+              <h6 class="mb-10">Liste des Messages</h6>
+              <p class="text-sm mb-20">
+                Veuillez survolez l'Objet pour voir le contenu du message
+              </p>
+              <div class="table-wrapper table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th><h6>Nom</h6></th>
+                      <th><h6>Prenom</h6></th>
+                      <th><h6>E-mail</h6></th>
+                      <th><h6>Objet</h6></th>
+                      <th><h6>contact</h6></th>
+                      <th><h6>date d'ajout</h6></th>
+                      <th><h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action</h6></th>
+                    </tr>
+                    <!-- end table row-->
+                  </thead>
+                  <tbody>
+                
+                {% for messages in msg %}
+
+                    <tr>
+                      <td class="min-width">
+                        <p>{{ messages.nom }}</p>
+                      </td>
+                      <td class="min-width">
+                          <p>{{ messages.prenom }}</p>
+                      </td>
+                      <td class="min-width">
+                          <p><a href="mailto:{{ messages.email }}">{{ messages.email }}</a></p>
+                      </td>
+                      <td class="min-width">
+                        <p class="etude-titre"><strong>{{ messages.objet }}</strong></p>
+                        <div class="hover-content">
+                            <p>{{ messages.contenu }}</p>
+                        </div>
+                      </td>
+                    
+                      <td class="min-width">
+                        <p>{{ messages.contact }}</p>
+                      </td>
+                      <td class="min-width">
+                        <p>{{ messages.date_ajout|date:"l d F Y" }} {{ messages.date_ajout|time:"H:i" }}</p>
+                      </td>
+                      <td>
+                        <div class="action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <form action="{% url 'dash:supprimer_msg' messages.id %}" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <button class="text-danger">
+                                    <i class="lni lni-trash-can"></i>
+                                </button>
+                            </form> 
+                        </div>
+                    </td>
+                    </tr>
+
+                {% endfor %}
+
+                  </tbody>
+                </table>
+                <!-- end table -->
+              </div>
+            </div>
+            <!-- end card -->
+          </div>
+          <!-- end col -->
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- ========== form-elements-wrapper end ========== -->
+    </div>
+    <!-- end container -->
+  </section>
+<!-- ========== tab components end ========== -->
+
+{% endblock %}

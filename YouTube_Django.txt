@@ -1,0 +1,93 @@
+Pour afficher des vidéos YouTube intégrées dans vos pages Django, vous pouvez utiliser la balise <iframe> HTML. Voici les étapes pour créer un affichage intégré de vidéos YouTube dans votre modèle Django :
+
+1 -- Ajoutez le lien YouTube dans votre modèle :
+
+    Dans votre modèle Django, ajoutez un champ pour stocker le lien YouTube de la vidéo que vous souhaitez afficher. Par exemple, vous pouvez utiliser un champ URLField pour stocker le lien :
+
+    
+    
+    
+    
+    
+    
+    
+    
+    python
+
+from django.db import models
+
+class Video(models.Model):
+    youtube_link = models.URLField()
+    # Autres champs de votre modèle
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+2 -- Créez une méthode pour extraire l'identifiant de la vidéo :
+
+Ajoutez une méthode à votre modèle pour extraire l'identifiant de la vidéo YouTube à partir du lien complet. Vous pouvez utiliser des expressions régulières pour extraire l'identifiant de la vidéo. Voici un exemple de méthode :
+
+
+
+python
+
+import re
+
+class Video(models.Model):
+    # Champs du modèle
+
+    def get_youtube_embed_url(self):
+        video_id = re.findall(r"v=([A-Za-z0-9_-]{11})", self.youtube_link)
+        if video_id:
+            embed_url = f"https://www.youtube.com/embed/{video_id[0]}"
+            return embed_url
+        return None
+
+
+Cette méthode utilise l'expression régulière r"v=([A-Za-z0-9_-]{11})" pour extraire l'identifiant de 11 caractères de la partie v du lien YouTube. Vous pouvez ajuster l'expression régulière en fonction de vos besoins.
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+3 -- Utilisez la balise <iframe> pour afficher la vidéo intégrée :
+
+Dans votre modèle Django où vous souhaitez afficher la vidéo, utilisez la balise <iframe> pour intégrer la vidéo YouTube à partir de l'URL d'intégration. Vous pouvez utiliser la méthode get_youtube_embed_url() pour obtenir l'URL d'intégration de la vidéo.
+
+Par exemple, dans votre template (fichier .html) :
+
+
+
+
+
+html
+
+    <div class="video-embed">
+        <iframe width="560" height="315" src="{{ video.get_youtube_embed_url }}" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    Assurez-vous de remplacer {{ video.get_youtube_embed_url }} par l'expression appropriée pour accéder à la méthode get_youtube_embed_url() dans votre contexte de modèle.
+
+
+
+
+Lorsque vous affichez votre modèle Django, la vidéo YouTube sera intégrée à l'aide de la balise <iframe> avec l'URL d'intégration appropriée.
+
+N'oubliez pas que vous devez avoir une connexion Internet pour que les vidéos YouTube s'affichent correctement, car elles sont chargées à partir du site YouTube.

@@ -1,0 +1,240 @@
+{% extends "dash/master.html" %}
+
+{% block titre %}
+    <title>Admin | Paramètre</title>
+    <style>
+        .hover-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            z-index: 1;
+        }
+        
+        .etude-titre:hover + .hover-content {
+            display: block;
+        }
+    </style>
+    <script>
+        function closeAlert() {
+            var alertBox = document.querySelector('.alert-box');
+            alertBox.style.display = 'none';
+        }
+
+        const etudeTitres = document.querySelectorAll('.etude-titre');
+        etudeTitres.forEach(etudeTitre => {
+            etudeTitre.addEventListener('mousemove', e => {
+                const hoverContent = etudeTitre.nextElementSibling;
+                hoverContent.style.top = `${e.clientY}px`;
+                hoverContent.style.left = `${e.clientX}px`;
+            });
+        });
+
+    </script>
+{% endblock %}
+
+{% block coll_typ_th_b %} class="collapsed" {% endblock %}
+{% block coll_bibilque %} class="collapsed" {% endblock %}
+{% block coll_ann %} class="collapsed" {% endblock %}
+
+{% block content %}
+{% load static %}
+
+      <!-- ========== section start ========== -->
+      <section class="section">
+        <div class="container-fluid">
+          <!-- ========== title-wrapper start ========== -->
+          <div class="title-wrapper pt-30">
+
+
+
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert-box success-alert pl-100">
+                            <button style="border: none;" class="close-btn" onclick="closeAlert()">
+                                <div class="left">
+                                    <h5 class="text-bold">X</h5>
+                                </div>
+                            </button>
+                            <div class="alert">
+                                <p class="text-medium">
+                                    {% for message in messages %}
+                                        {{ message }}
+                                    {% endfor %}
+                                </p>
+                            </div>
+                            
+                        </div>
+                    {% elif message.tags == 'error' %}
+                        <div class="alert-box danger-alert pl-100">
+                            <button style="border: none;" class="close-btn" onclick="closeAlert()">
+                                <div class="left">
+                                    <h5 class="text-bold">X</h5>
+                                </div>
+                            </button>
+                            <div class="alert">
+                                <p class="text-medium">{{ message }}</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+
+
+
+
+
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                  <div class="title mb-30">
+                    <h2>Parametres</h2>  
+                  </div>
+                </div>
+                
+                <!-- end col -->
+              </div>
+              <!-- end row -->
+            </div>
+          <!-- ========== title-wrapper end ========== -->
+
+          <div class="row">
+
+        
+            <div class="col-lg-6">
+            <form name="form_mod_edit_user" action="{% url 'dash:user_update' user.id %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="card-style settings-card-1 mb-30">
+                    <div
+                    class="
+                        title
+                        mb-30
+                        d-flex
+                        justify-content-between
+                        align-items-center
+                    "
+                    >
+                    <h6>Profile</h6>
+                    <button class="border-0 bg-transparent">
+                        <i class="mdi mdi-dots-horizontal-circle"></i>
+                    </button>
+                  </div>
+                  <form action="#">
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="input-style-1">
+                          <label>Nom</label>
+                          <input required type="text" placeholder="Nom" value="{{ user.last_name }}" name="last_name" />
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="input-style-1">
+                          <label>Prenom</label>
+                          <input required type="text" placeholder="Prénom" value="{{ user.first_name }}" name="first_name" />
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="input-style-1">
+                          <label>Username</label>
+                          <input required type="text" placeholder="Username" value="{{ user.username }}" name="username" />
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="input-style-1">
+                          <label>Email</label>
+                          <input required type="text" placeholder="Email" value="{{ user.email }}" name="email" />
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <button class="main-btn primary-btn btn-hover">
+                          Mise à jour Profile
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+            </form>
+                <!-- end card -->
+            </div>
+            
+
+            <div class="col-lg-6">
+            <form action="{% url 'dash:mdp_change' user.id %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="card-style settings-card-1 mb-30">
+                    <div
+                    class="
+                        title
+                        mb-30
+                        d-flex
+                        justify-content-between
+                        align-items-center
+                    "
+                    >
+                    <h6>Changer le mot de passe</h6>
+                    <button class="border-0 bg-transparent">
+                        <i class="mdi mdi-shield-key"></i>
+                    </button>
+                    </div>
+                    <div class="profile-info">
+                    <div class="input-style-1">
+                        <label>Mot de passe Actuelle</label>
+                        <input type="password" placeholder="**********" name="password" required/>
+                    </div>
+                    <div class="input-style-1">
+                        <label id="password-label" class="initial-color">Nouveau mot de passe</label>
+                        <input type="password" id="password1" name="password1" required onchange="checkPasswordMatch()"/>
+                    </div>
+                    <div class="input-style-1">
+                        <label id="confirm-password-label" class="initial-color">Confirmer nouveau mot de passe</label>
+                        <input type="password" id="password2" name="password2" required onchange="checkPasswordMatch()"/>
+                    </div>
+                    <div align="right" class="col-12">
+                        <button id="submit-button" disabled class="main-btn primary-btn btn-hover">
+                        Confirmer
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            </form>
+              <!-- end card -->
+            </div>
+            
+            <!-- end col -->
+
+            <script>
+                function checkPasswordMatch() {
+                    var password1 = document.getElementById("password1").value;
+                    var password2 = document.getElementById("password2").value;
+                    var passwordLabel = document.getElementById("password-label");
+                    var confirmPasswordLabel = document.getElementById("confirm-password-label");
+                    var submitButton = document.getElementById("submit-button");
+                
+                    if (password1 === password2) {
+                        passwordLabel.classList.remove("initial-color");
+                        confirmPasswordLabel.classList.remove("initial-color");
+                        passwordLabel.style.color = "green";
+                        confirmPasswordLabel.style.color = "green";
+                        submitButton.disabled = false;
+                    } else {
+                        passwordLabel.classList.remove("initial-color");
+                        confirmPasswordLabel.classList.remove("initial-color");
+                        passwordLabel.style.color = "red";
+                        confirmPasswordLabel.style.color = "red";
+                        submitButton.disabled = true;
+                    }
+                }
+            </script>
+
+
+            <!-- end col -->
+          </div>
+          <!-- end row -->
+        </div>
+        <!-- end container -->
+      </section>
+      <!-- ========== section end ========== -->
+
+{% endblock %}

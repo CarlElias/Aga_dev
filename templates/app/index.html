@@ -1,0 +1,210 @@
+{% extends "app/master.html" %}
+
+{% block position %} position-fixed {% endblock %}
+
+{% block content %}
+{% load static %}
+        <!-- Slider with inspirational bible-based quotes -->
+        <div id="carouselExampleCaptions" class="carousel slide">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active" style="max-height: 800px;">
+                    <img src="{% static 'app/img/aaron-burden-9zsHNt5OpqE-unsplash.jpg' %}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 class="quote-title">{{ q_0.verset }}</h5>
+                        <p class="quote"> “ {{ q_0.txt_quote }} ” </p>
+                    </div>
+                </div>
+                <div class="carousel-item" style="max-height: 800px;">
+                    <img src="{% static 'app/img/guillaume-de-germain-rEVQCk1dqrA-unsplash.jpg' %}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 class="quote-title">{{ q_1.verset }}</h5>
+                        <p class="quote"> “ {{ q_1.txt_quote }} ” </p>
+                    </div>
+                </div>
+                <div class="carousel-item" style="max-height: 800px;">
+                    <img src="{% static 'app/img/joel-muniz-XqXJJhK-c08-unsplash.jpg' %}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 class="quote-title">{{ q_2.verset }}</h5>
+                        <p class="text-lg-left quote"> “ {{ q_2.txt_quote }} ” 
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+    </header>
+    <div id="main" class="container w-100 h-100 mt-3 mb-2">
+
+        <!-- links -->
+
+        <div class="container w-75">
+            <div class="row w-100 align-items-center justify-content-evenly">
+                <div class="col col-12 col-md-10 card mb-3 p-0" style="max-width: 540px;">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{% static 'app/img/DenaMwana2020.jpg' %}" class="img-fluid rounded-start" style="min-height: 100%" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">Grace prophétique méconnue - Dena Mwana</h5>
+                                <p class="card-text">La chantre Dena Mwana partage avec nous son expérience</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-12 col-md-2 d-inline-flex justify-content-center gap-2">
+                    <a href="https://www.youtube.com/watch?v=hcwN8uVYqXo"><i class="bi-youtube"
+                            style="font-size: 1.5rem; color: red"></i></a>
+                    <a href=""><i class="bi-facebook" style="font-size: 1.5rem; color: cornflowerblue;"></i></a>
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+
+        <!-- etudeb -->
+        <div class="bible-study container">
+            <h2 id="bible-anchor" class="text-center mb-5 mt-5 border-top pt-5">Etude Biblique</h2>
+            <swiper-container speed="500" loop="true" css-mode="true" class="container d-inline-flex">
+                {% if etudeb %}
+                {% for etudeb in etudeb %}
+                {% with slug=etudeb.titre|slugify%}
+
+                <swiper-slide class="col col-12 col-md-3 m-2">
+                    <div class=" border rounded p-2">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ etudeb.titre }}</h5>
+                            <div class="row">
+                                {% for theme in etudeb.themes.all %}
+                                <div class="col">
+                                        <h6 class="card-subtitle mb-2 text-body-secondary"> {{ theme }}, </h6>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <p class="card-text">
+                              {{ etudeb.sous_titre }}
+                            </p>
+                            <a href="{% url 'app:etudeb_view' etudeb.id slug %}" class="card-link">Discuss about it</a>
+                        </div>
+                    </div>
+                </swiper-slide>
+                
+                {% endwith %}
+                {% endfor %}
+                {% else %}
+                <p class="text-center">Aucune Etude Biblique</p>
+                {% endif %}
+            </swiper-container>
+            <p class="float-end mt-2"><a href="{% url 'app:list_et' %}">Voir plus >>></a></p>
+
+        </div>
+
+
+
+        <!-- Lifestyle -->
+        <div class="lyfestyle container w-100 mt-5">
+            <h2 id="lifestyle-anchor" class="text-center mb-5 border-top pt-5">LyfeStyle</h2>
+            <swiper-container id="swiper-lifestyle" speed="500" loop="true" css-mode="true"class="justify-content-evenly container row gap-4">
+                <swiper-slide class="col col-12 col-md-3">
+                    <div class="col col-12 card mb-3 ">
+                        <img src="./img/bianca-fazacas-tcHOgpk3K60-unsplash.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text text-truncate">This is a wider card with supporting text below as a natural lead-in to
+                                additional content. This content is a little bit longer.</p>
+                            <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+                        </div>
+                    </div>
+                </swiper-slide>
+                <swiper-slide class="col col-12 col-md-6">
+                    <div class="col col-12 card mb-3 ">
+                        <img src="./img/john-arano-h4i9G-de7Po-unsplash.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text text-truncate">This is a wider card with supporting text below as a natural lead-in to
+                                additional content. This content is a little bit longer.</p>
+                            <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+                        </div>
+                    </div>
+                </swiper-slide>
+                <swiper-slide class="col col-12 col-md-6">
+                    <div class="col col-12 card mb-3 ">
+                        <img src="./img/lily-banse--YHSwy6uqvk-unsplash.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text text-truncate">This is a wider card with supporting text below as a natural lead-in to
+                                additional content. This content is a little bit longer.</p>
+                            <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+                        </div>
+                    </div>
+                </swiper-slide>
+            </swiper-container>
+            <p class="float-end mt-2"><a href="">Voir plus >>></a></p>
+
+        </div>
+
+
+
+        <!-- Solidarity Chain -->
+        <div id="solidatity-chain" class="container w-75 mt-5 mb-5">
+            <h2 id="solidarity-anchor" class="text-center mb-5 border-top pt-5">Solidarity Chain</h2>
+            <swiper-container id="swiperall" speed="500" loop="true" css-mode="true"class=" justify-content-evenly container row row-cols-3">
+                <swiper-slide class="slide-solidarity col-sm-6 mb-3 mb-sm-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Special title treatment</h5>
+                            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                        </div>
+                    </div>
+                </swiper-slide>
+                <swiper-slide class="slide-solidarity col-sm-6 mb-3 mb-sm-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Special title treatment</h5>
+                            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                        </div>
+                    </div>
+                </swiper-slide>
+                <swiper-slide class="slide-solidarity col-sm-6 mb-3 mb-sm-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Special title treatment</h5>
+                            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                        </div>
+                    </div>
+                </swiper-slide>
+            </swiper-container>
+            
+            <p class="float-end mt-2"><a href="">Voir plus >>></a></p>
+           
+        </div>
+
+
+    </div>
+
+{% endblock %}

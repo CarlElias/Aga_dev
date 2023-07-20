@@ -1,0 +1,76 @@
+{% extends "dash/master.html" %}
+
+{% block titre %}
+    <title>Admin | Edit Type - Annonce</title>
+    <script>
+        function closeAlert() {
+            var alertBox = document.querySelector('.alert-box');
+            alertBox.style.display = 'none';
+        }
+    </script>
+{% endblock %}
+
+{% block show_typ_th_b %} show {% endblock %}
+{% block active_a %} class="active" {% endblock %}
+{% block coll_dash %} class="collapsed" {% endblock %}
+{% block coll_bibilque %} class="collapsed" {% endblock %}
+{% block coll_ann %} class="collapsed" {% endblock %}
+
+{% block content %}
+{% load static %}
+
+      <!-- ========== tab components start ========== -->
+      <section class="tab-components">
+        <div class="container-fluid">
+          <!-- ========== title-wrapper start ========== -->
+          <div class="title-wrapper pt-30">
+
+
+            <div class="row align-items-center">
+              <div class="col-md-12">
+                <div class="title mb-30">
+                  <h2>Modification Type d'Annonce : {{ typ_a.nom_type_annonce }} </h2>
+                </div>
+              </div>
+              
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== title-wrapper end ========== -->
+
+          <!-- ========== form-elements-wrapper start ========== -->
+          <div class="form-elements-wrapper">
+            <div class="row">
+              <div class="col-lg-12">
+                <!-- input style start -->
+                <div class="card-style mb-30">
+                  <h6 class="mb-25">Ajout d'un nouveau Theme</h6>
+                    <form action="{% url 'dash:edit_typ_a' typ_a.id %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="input-style-1">
+                            <label>Type d'annonce</label>
+                            <input required value="{{ typ_a.nom_type_annonce }}" type="text" placeholder="saisir le type d'annonce..." id="nom_type_annonce" name="nom_type_annonce" />
+                        </div>
+                        <!-- end input -->
+                        <div style="text-align: right;">
+                            <button name="form_mod_edit_typ_a" class="main-btn success-btn rounded-full btn-hover" style="text-align: center;">
+                                Modifier
+                            </button>
+                        </div>
+                    </form>
+                  <!-- end input -->
+                </div>
+                <!-- end card -->
+                <!-- ======= input style end ======= -->
+              </div>
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== form-elements-wrapper end ========== -->
+        </div>
+        <!-- end container -->
+      </section>
+      <!-- ========== tab components end ========== -->
+
+{% endblock %}

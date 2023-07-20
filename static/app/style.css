@@ -1,0 +1,37 @@
+/* #nav-bar {
+    position: sticky;
+    z-index: 10;
+} */
+
+#main {
+    padding-top: 40px;
+}
+
+#links img {
+    height: 100px;
+    width: auto;
+}
+
+.swiper {
+    width: 600px;
+    height: 400px;
+}
+
+.quote-title {
+    font-size: 30px;
+    font-style: italic;
+}
+.quote {
+    font-size: 70px;
+    font-family: 'Courier New', Courier, monospace
+}
+
+.carousel-caption {
+    background-color: rgba(60, 60, 60, 0.4);
+    
+    
+}
+
+.slide-solidarity {
+    width: 296px;
+}

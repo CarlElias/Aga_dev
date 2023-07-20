@@ -1,0 +1,222 @@
+{% extends "dash/master.html" %}
+
+{% block titre %}
+    <title>Admin | Inspiration</title>
+    <style>
+        .hover-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            z-index: 1;
+        }
+        
+        .etude-titre:hover + .hover-content {
+            display: block;
+        }
+    </style>
+    <script>
+        function closeAlert() {
+            var alertBox = document.querySelector('.alert-box');
+            alertBox.style.display = 'none';
+        }
+
+        const etudeTitres = document.querySelectorAll('.etude-titre');
+        etudeTitres.forEach(etudeTitre => {
+            etudeTitre.addEventListener('mousemove', e => {
+                const hoverContent = etudeTitre.nextElementSibling;
+                hoverContent.style.top = `${e.clientY}px`;
+                hoverContent.style.left = `${e.clientX}px`;
+            });
+        });
+    </script>
+
+{% endblock %}
+
+{% block active_qt %} active {% endblock %}
+{% block coll_dash %} class="collapsed" {% endblock %}
+{% block coll_typ_th_b %} class="collapsed" {% endblock %}
+{% block coll_bibilque %} class="collapsed" {% endblock %}
+{% block coll_ann %} class="collapsed" {% endblock %}
+
+{% block content %}
+{% load static %}
+
+<!-- ========== tab components start ========== -->
+      <section class="tab-components">
+        <div class="container-fluid">
+          <!-- ========== title-wrapper start ========== -->
+          <div class="title-wrapper pt-30">
+
+
+            {% if messages %}
+                <div class="alert-box success-alert pl-100">
+                    <button style="border: none;" class="close-btn" onclick="closeAlert()">
+                        <div class="left">
+                            <h5 class="text-bold">X</h5>
+                        </div>
+                    </button>
+                    <div class="alert">
+                        <p class="text-medium">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </p>
+                    </div>
+                    
+                </div>
+            {% endif %}
+
+
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="title mb-30">
+                  <h2>Inspirations</h2>
+                </div>
+              </div>
+              
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== title-wrapper end ========== -->
+
+          <!-- ========== form-elements-wrapper start ========== -->
+          <div class="form-elements-wrapper">
+            <div class="row">
+              <div class="col-lg-12">
+                <!-- input style start -->
+                <div class="card-style mb-30">
+                  <h6 class="mb-25">Ajout d'une Inspiration</h6>
+                    <form action="{% url 'dash:ajouter_insp' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="input-style-1 col-lg-6">
+                                <label>Verset</label>
+                                <input required type="text" placeholder="saisir le verset" id="verset" name="verset" />
+                            </div>
+                            
+                            <div class="input-style-1 col-lg-6">
+                                <label>Texte</label>
+                                <input required type="text" placeholder="saisir le texte ..." id="txt_quote" name="txt_quote" />
+                            </div>
+
+                            <div class="card-style mb-30">
+                                <h6 style="font-size: 14px;" class="mb-25">Les thèmes</h6>
+                                <div class="row">
+                                    {% for theme in themes %}
+                                        <div class="form-check checkbox-style col-lg-4">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            name="themes"
+                                            value="{{ theme.id }}"
+                                            id="theme-{{ theme.id }}"
+                                        />
+                                        <label class="form-check-label" for="theme-{{ theme.id }}">
+                                            {{ theme.theme }}</label
+                                        >
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end input -->
+                        <div style="text-align: right;">
+                            <button class="main-btn success-btn rounded-full btn-hover" style="text-align: center;">
+                                Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                  <!-- end input -->
+                </div>
+                <!-- end card -->
+                <!-- ======= input style end ======= -->
+              </div>
+            </div>
+            <!-- end row -->
+
+            <div class="row">
+                <div class="col-lg-12">
+                  <div class="card-style mb-30">
+                    <h6 class="mb-10">Inspirations Disponibles sur le site</h6>
+                    <p class="text-sm mb-20">
+                      
+                    </p>
+                    <div class="table-wrapper table-responsive">
+                      <table class="table striped-table">
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th><h6>Verset</h6></th>
+                            <th><h6>Themes</h6></th>
+                            <th><h6>Date d'ajout</h6></th>
+                            <th><h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action</h6></th>
+                          </tr>
+                          <!-- end table row-->
+                        </thead>
+                        <tbody>
+                            {% for qt in qt %}
+                            <tr>
+                                <td>
+                                    &nbsp;&nbsp;
+                                </td>
+                                <td>
+                                    <p class="etude-titre">{{ qt.verset }}</p>
+                                    <div class="hover-content">
+                                        <p>{{ qt.txt_quote }}</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p>
+                                        {% for theme in qt.themes.all %}
+
+                                            {{ theme }}, 
+
+                                        {% endfor %}
+                                    </p>
+                                </td>
+                                <td>
+                                <p> {{ qt.date_ajout|date:"l d F Y" }} {{ qt.date_ajout|time:"H:i" }} </p>
+                                </td>
+                                <td>
+                                <div class="action">
+
+                                    <form action="{% url 'dash:edit_insp' qt.id %}" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                          <button class="edit" name="form_edit_qt">
+                                            <i class="lni lni-pencil"></i>
+                                          </button>
+                                      </form> 
+  
+                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  
+                                    <form action="{% url 'dash:supprimer_insp' qt.id %}" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <button class="text-danger">
+                                            <i class="lni lni-trash-can"></i>
+                                        </button>
+                                    </form> 
+
+                                </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                      </table>
+                      <!-- end table -->
+                    </div>
+                  </div>
+                  <!-- end card -->
+                </div>
+                <!-- end col -->
+            </div>
+          </div>
+          <!-- ========== form-elements-wrapper end ========== -->
+        </div>
+        <!-- end container -->
+      </section>
+<!-- ========== tab components end ========== -->
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "app/master.html" %}
+
+{% block content %}
+{% load static %}
+
+    <div class="main container mt-5 w-75">
+        <div class="row row-cols-4 gap-2">
+            {% for etudeb in etudeb%}
+            {% with slug=etudeb.titre|slugify%}
+            <div class="col col-12 col-md-3 border rounded p-2">
+                <div class="card-body">
+                    <h5 class="card-title">{{etudeb.titre}}</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">verset</h6>
+                    <p class="card-text">
+                        {{etudeb.sous_titre}}
+                    </p>
+                    <a href="{% url 'app:etudeb_view' etudeb.id slug %}" class="card-link">Discuss about it</a>
+                </div>
+            </div>
+            {% endwith %}
+            {% endfor %}
+        </div>
+    </div>
+
+
+{% endblock %}

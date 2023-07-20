@@ -1,0 +1,192 @@
+{% extends "dash/master.html" %}
+
+{% block titre %}
+    <title>Admin | Commentaire</title>
+    <style>
+        .hover-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            z-index: 1;
+        }
+        
+        .etude-titre:hover + .hover-content {
+            display: block;
+        }
+    </style>
+
+
+      
+{% endblock %}
+
+{% block comment %} active {% endblock %}
+{% block coll_dash %} class="collapsed" {% endblock %}
+{% block coll_typ_th_b %} class="collapsed" {% endblock %}
+{% block coll_bibilque %} class="collapsed" {% endblock %}
+{% block coll_ann %} class="collapsed" {% endblock %}
+
+{% block content %}
+{% load static %}
+
+<!-- ========== table components start ========== -->
+    <section class="table-components">
+        <div class="container-fluid">
+          <!-- ========== title-wrapper start ========== -->
+          <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="title mb-30">
+                  <h2>Commentaire : Tri par Categorie</h2>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="breadcrumb-wrapper mb-30">
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item">
+                        <a style="color: #4a6cf7;">Categorie</a>
+                      </li>
+                      <li class="breadcrumb-item"><a href="{% url 'dash:comment_st' %}">Status</a></li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+              <!-- end col -->
+                <!-- start select
+                    <div class="col-md-3">
+                        <div class="select-style-1">
+                            <div class="select-position">
+                                <select id="category1" class="category-filter">
+                                    <option>Type</option>
+                                    <option value="lifestyle">Lifestyle</option>
+                                    <option value="etude_biblique">Etude biblique</option>
+                                    <option value="pensée_biblique">Pensée biblique</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="select-style-1">
+                            <div class="select-position">
+                                <select id="category2">
+                                    <option>Status</option>
+                                    <option value="non-validé">Non-validé</option>
+                                    <option value="pre-validé">Pre-validé</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                end select -->   
+                
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== title-wrapper end ========== -->
+
+          <!-- ========== tables-wrapper start ========== -->
+          <div class="tables-wrapper">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="card-style mb-30">
+                  <h6 class="mb-10">Commentaire</h6>
+                  <p class="text-sm mb-20">
+                    For basic styling—light padding and only horizontal
+                    dividers—use the class table.
+                  </p>
+                  <div class="table-wrapper table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th><h6>Utilisateurs</h6></th>
+                          <th><h6>Sujet</h6></th>
+                          <th><h6>Categorie</h6></th>
+                          <th><h6>Pré-validé</h6></th>
+                          <th><h6>Validé</h6></th>
+                          <th><h6>Status</h6></th>
+                          <th><h6>Action</h6></th>
+                        </tr>
+                        <!-- end table row-->
+                      </thead>
+                      <tbody id="commentaire-body">
+                        {% for com in comments %}
+                        <tr>
+                          <td>
+                            <p>{{ com.user.username }}</p>
+                          </td>
+                          <td class="min-width">
+                            
+                            <p class="etude-titre">{{ com.titre_sujet  }}</p>
+                            <div class="hover-content">
+                                <p>{{ com.contenu }}</p>
+                            </div>
+                          </td>
+                          <td class="min-width">
+                            <p>{{ com.table }}</p>
+                          </td>
+                          <td>
+                            <div class="check-input-primary">
+                                <input class="form-check-input" type="checkbox"
+                                {% if com.statut == "pre-validé" %}checked{% endif %}
+                                />
+                            </div>
+                          </td>
+                          <td>
+                            <div class="check-input-primary">
+                                <input class="form-check-input" type="checkbox"
+                                {% if com.statut == "validé" %}checked{% endif %}
+                                />
+                            </div>
+                          </td>
+                          <td class="min-width">
+                            {% if com.statut == "validé" %}
+                                <div class="status">
+                                    <span class="status-btn success-btn">{{ com.statut }}</span>
+                                </div>
+                            {% endif %}
+                            {% if com.statut == "pre-validé" %}
+                                <div class="status">
+                                    <span class="status-btn info-btn">{{ com.statut }}</span>
+                                </div>
+                            {% endif %}
+                            {% if com.statut == "non-validé" %}
+                                <div class="status">
+                                    <span class="status-btn close-btn">{{ com.statut }}</span>
+                                </div>
+                            {% endif %}
+                            
+                          </td>
+                          <td>
+                            <div class="action">
+
+                                <form action="{% url 'dash:supprimer_commentaire' com.id %}" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <button class="text-danger">
+                                        <i class="lni lni-trash-can"></i>
+                                    </button>
+                                </form> 
+
+                            </div>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                    <!-- end table -->
+                  </div>
+                </div>
+                <!-- end card -->
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== tables-wrapper end ========== -->
+        </div>
+        <!-- end container -->
+    </section>
+<!-- ========== table components end ========== -->
+
+{% endblock %}

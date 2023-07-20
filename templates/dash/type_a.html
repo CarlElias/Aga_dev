@@ -1,0 +1,158 @@
+{% extends "dash/master.html" %}
+
+{% block titre %}
+    <title>Admin | Type - Annonce</title>
+    <script>
+        function closeAlert() {
+            var alertBox = document.querySelector('.alert-box');
+            alertBox.style.display = 'none';
+        }
+    </script>
+{% endblock %}
+
+{% block show_typ_th_b %} show {% endblock %}
+{% block active_a %} class="active" {% endblock %}
+{% block coll_dash %} class="collapsed" {% endblock %}
+{% block coll_bibilque %} class="collapsed" {% endblock %}
+{% block coll_ann %} class="collapsed" {% endblock %}
+
+{% block content %}
+{% load static %}
+
+      <!-- ========== tab components start ========== -->
+      <section class="tab-components">
+        <div class="container-fluid">
+          <!-- ========== title-wrapper start ========== -->
+          <div class="title-wrapper pt-30">
+
+
+            {% if messages %}
+                <div class="alert-box success-alert pl-100">
+                    <button style="border: none;" class="close-btn" onclick="closeAlert()">
+                        <div class="left">
+                            <h5 class="text-bold">X</h5>
+                        </div>
+                    </button>
+                    <div class="alert">
+                        <p class="text-medium">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </p>
+                    </div>
+                    
+                </div>
+            {% endif %}
+
+
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="title mb-30">
+                  <h2>Type d'Annonce</h2>
+                </div>
+              </div>
+              
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- ========== title-wrapper end ========== -->
+
+          <!-- ========== form-elements-wrapper start ========== -->
+          <div class="form-elements-wrapper">
+            <div class="row">
+              <div class="col-lg-12">
+                <!-- input style start -->
+                <div class="card-style mb-30">
+                  <h6 class="mb-25">Ajout d'un nouveau Theme</h6>
+                    <form action="{% url 'dash:ajouter_typ_a' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="input-style-1">
+                            <label>Type d'annonce</label>
+                            <input required type="text" placeholder="saisir le type d'annonce..." id="nom_type_annonce" name="nom_type_annonce" />
+                        </div>
+                        <!-- end input -->
+                        <div style="text-align: right;">
+                            <button class="main-btn success-btn rounded-full btn-hover" style="text-align: center;">
+                                Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                  <!-- end input -->
+                </div>
+                <!-- end card -->
+                <!-- ======= input style end ======= -->
+              </div>
+            </div>
+            <!-- end row -->
+
+            <div class="row">
+                <div class="col-lg-12">
+                  <div class="card-style mb-30">
+                    <h6 class="mb-10">Liste des Types d'annonces</h6>
+                    <p class="text-sm mb-20">
+                      
+                    </p>
+                    <div class="table-wrapper table-responsive">
+                      <table class="table striped-table">
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th><h6>Type d'annonce</h6></th>
+                            <th><h6>Date d'ajout</h6></th>
+                            <th><h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action</h6></th>
+                          </tr>
+                          <!-- end table row-->
+                        </thead>
+                        <tbody>
+                            {% for tp_a in tp_a %}
+                            <tr>
+                                <td>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                </td>
+                                <td>
+                                <p> {{ tp_a.nom_type_annonce }} </p>
+                                </td>
+                                <td>
+                                <p> {{ tp_a.date_ajout|date:"l d F Y" }} {{ tp_a.date_ajout|time:"H:i" }} </p>
+                                </td>
+                                <td>
+                                <div class="action">
+                                    
+                                    <form action="{% url 'dash:edit_typ_a' tp_a.id %}" method="post" enctype="multipart/form-data">
+                                      {% csrf_token %}
+                                        <button class="edit" name="form_edit_typ_a">
+                                          <i class="lni lni-pencil"></i>
+                                        </button>
+                                    </form> 
+
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                                    <form action="{% url 'dash:supprimer_typ_a' tp_a.id %}" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <button class="text-danger">
+                                            <i class="lni lni-trash-can"></i>
+                                        </button>
+                                    </form> 
+                                    
+                                </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                      </table>
+                      <!-- end table -->
+                    </div>
+                  </div>
+                  <!-- end card -->
+                </div>
+                <!-- end col -->
+            </div>
+          </div>
+          <!-- ========== form-elements-wrapper end ========== -->
+        </div>
+        <!-- end container -->
+      </section>
+      <!-- ========== tab components end ========== -->
+
+{% endblock %}

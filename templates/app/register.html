@@ -1,0 +1,62 @@
+{% extends "app/master.html" %}
+
+{% block content %}
+{% load static %}
+
+{% if error %}
+        <p>{{ error }}</p>
+{% endif %}
+
+{% if success %}
+        <p>{{ success }}</p>
+{% endif %}
+
+<div class="container w-75 mt-3 mt-md-5">
+    <form class="row g-3" action="{% url 'app:register' %}" method="POST">
+        {% csrf_token %}
+
+        <div class="col-md-6">
+            <label for="inputFirstName" class="form-label">Nom</label>
+            <input type="text" name="last_name" class="form-control" id="inputFirstName">
+        </div>
+        <div class="col-md-6">
+            <label for="inputLastName" class="form-label">Prénom</label>
+            <input type="text" name="first_name" class="form-control" id="inputLastName">
+        </div>
+        <div class="col-md-6">
+            <label for="inputEmail4" class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" id="inputEmail4">
+        </div>
+        <div class="col-md-6">
+            <label for="inputEmail4" class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" id="inputEmail4">
+        </div>
+        <div class="col-md-6">
+            <label for="inputPassword4" class="form-label">Mot de passe</label>
+            <input type="password" name="password1" class="form-control" id="inputPassword4">
+        </div>
+        <div class="col-md-6">
+            <label for="inputPassword4" class="form-label">Confirmez le mot de passe</label>
+            <input type="password" name="password2" class="form-control" id="inputPassword4">
+            <!-- <input type="password" name="password2" class="form-control" id="inputPassword4" pattern="(?=.*\d).{6,}" title="Le mot de passe doit contenir au moins 6 caractères et au moins un chiffre" required> -->
+        </div>
+    
+        <div class="col-12">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="gridCheck">
+                <label class="form-check-label" for="gridCheck">
+                    Check me out
+                </label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="{% url 'app:login_view' %}">Se connecter</a>
+            </div>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Sign in</button>
+        </div>
+    </form>
+</div>
+    
+    <br><br><br><br><br><br><br><br>
+
+{% endblock %}

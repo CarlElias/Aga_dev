@@ -1,0 +1,5 @@
+SuperUtilisateur : 
+                carl : 0000
+
+User Normal : 
+                florian : azerty
