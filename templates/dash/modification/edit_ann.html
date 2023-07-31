@@ -1,7 +1,7 @@
 {% extends "dash/master.html" %}
 
 {% block titre %}
-    <title>Admin | Etude Biblique</title>
+    <title>Admin | Edit Annonce</title>
     <style>
         .hover-content {
             display: none;
@@ -31,16 +31,17 @@
             });
         });
     </script>
-{% endblock %}
+    {% endblock %}
 
-{% block active_etude_b %} class="active" {% endblock %}
-{% block show_etude %} show {% endblock %}
-{% block coll_dash %} class="collapsed" {% endblock %}
-{% block coll_typ_th_b %} class="collapsed" {% endblock %}
-{% block coll_ann %} class="collapsed" {% endblock %}
-
-{% block content %}
-{% load static %}
+    {% block active_ann %} class="active" {% endblock %}
+    {% block show_annonce %} show {% endblock %}
+    
+    {% block coll_dash %} class="collapsed" {% endblock %}
+    {% block coll_typ_th_b %} class="collapsed" {% endblock %}
+    {% block coll_bibilque %} class="collapsed" {% endblock %}
+    
+    {% block content %}
+    {% load static %}
 
 <!-- ========== tab components start ========== -->
       <section class="tab-components">
@@ -52,7 +53,7 @@
             <div class="row align-items-center">
               <div class="col-md-6">
                 <div class="title mb-30">
-                  <h2>Modifier Etude</h2>
+                  <h2>Modifier Annonce</h2>
                 </div>
               </div>
               
@@ -68,59 +69,43 @@
               <div class="col-lg-12">
                 <!-- input style start -->
                 <div class="card-style mb-30">
-                  <h6 class="mb-25">Modifier Etude Biblique</h6>
-                    <form action="{% url 'dash:edit_etude_b' et_b.id %}" method="post" enctype="multipart/form-data">
+                  <h6 class="mb-25">Modifier Annonce</h6>
+                    <form action="{% url 'dash:edit_ann' an.id %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="row">
                             <div class="input-style-1 col-lg-6">
                                 <label>Titre</label>
-                                <input required type="text" value="{{ et_b.titre }}" placeholder="saisir le titre..." id="titre" name="titre" />
+                                <input required type="text" value="{{ an.titre }}" placeholder="saisir le titre..." id="titre" name="titre" />
                             </div>
                             
                             <div class="input-style-1 col-lg-6">
-                                <label>Sous-titre</label>
-                                <input required type="text" value="{{ et_b.sous_titre }}" placeholder="saisir le type d'annonce..." id="sous_titre" name="sous_titre" />
+                                <label>Image pour l'annonce</label>
+                                <input type="file" id="image_annonce" value="{{ an.image_annonce }}" name="image_annonce">
                             </div>
-
+    
                             <div class="input-style-1 col-lg-6">
-                                <label>Verset</label>
-                                <input required type="text" placeholder="saisir le verset..." id="verset" name="verset" value="{{ et_b.verset }}"/>
+                                <label>Annonce</label>
+                                <input required type="text" value="{{ an.txt_annonce }}"  placeholder="saisir le verset" id="txt_annonce" name="txt_annonce" />
                             </div>
                             
-                            <div class="input-style-1 col-lg-6">
-                                <label>Lien YouTube</label>
-                                <input type="text" placeholder="saisir le Lien YouTube" id="lien_yt" name="lien_yt" value="{{ et_b.lien_yt }}"/>
-                            </div>
-
-                            <div class="card-style mb-30">
-                                <h6 style="font-size: 14px;" class="mb-25">Les thèmes</h6>
-                                <div class="row">
-                                    {% for theme in themes %}
-                                        <div class="form-check checkbox-style col-lg-4">
-                                        <input
-                                            class="form-check-input"
-                                            type="checkbox"
-                                            name="themes"
-                                            value="{{ theme.id }}"
-                                            id="theme-{{ theme.id }}"
-                                            {% if theme.id in themes_values %}checked{% endif %}
-                                        />
-                                        <label class="form-check-label" for="theme-{{ theme.id }}">
-                                            {{ theme.theme }}</label
-                                        >
-                                        </div>
+                            <div class="select-style-1 col-lg-6">
+                                <label>Type d'annonce</label>
+                                <div class="select-position">
+                                  <select name="type_annonce" required>
+                                    <option value={{ an.type_annonce.id }} disabled selected hidden>{{ an.type_annonce }}</option>
+                                    {% for ty_a in ty_a %}
+                                      <option value="{{ ty_a.id }}" >{{ ty_a.nom_type_annonce }}</option>
                                     {% endfor %}
+                                  </select>
                                 </div>
                             </div>
 
-                            <div class="input-style-1 col-lg-12">
-                                <label>Contenu</label>
-                                <textarea name="contenu" placeholder="Contenu" rows="5">{{ et_b.contenu }}</textarea>
-                            </div>
+                            <input hidden type="texte" name="type_annonce_hidden" value="{{ an.id }}"/>
+                            
                         </div>
                         <!-- end input -->
                         <div style="text-align: right;">
-                            <button name="form_mod_edit_etude_b" class="main-btn success-btn rounded-full btn-hover" style="text-align: center;">
+                            <button name="form_mod_edit_ann" class="main-btn success-btn rounded-full btn-hover" style="text-align: center;">
                                 Modifier
                             </button>
                         </div>

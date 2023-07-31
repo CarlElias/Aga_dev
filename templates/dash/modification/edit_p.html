@@ -1,0 +1,124 @@
+{% extends "dash/master.html" %}
+
+{% block titre %}
+    <title>Admin | Modification Pensée Biblique</title>
+    <style>
+        .hover-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            z-index: 1;
+        }
+        
+        .etude-titre:hover + .hover-content {
+            display: block;
+        }
+    </style>
+    <script>
+        function closeAlert() {
+            var alertBox = document.querySelector('.alert-box');
+            alertBox.style.display = 'none';
+        }
+
+        const etudeTitres = document.querySelectorAll('.etude-titre');
+        etudeTitres.forEach(etudeTitre => {
+            etudeTitre.addEventListener('mousemove', e => {
+                const hoverContent = etudeTitre.nextElementSibling;
+                hoverContent.style.top = `${e.clientY}px`;
+                hoverContent.style.left = `${e.clientX}px`;
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block active_pens_b %} class="active" {% endblock %}
+{% block show_etude %} show {% endblock %}
+{% block coll_dash %} class="collapsed" {% endblock %}
+{% block coll_typ_th_b %} class="collapsed" {% endblock %}
+{% block coll_ann %} class="collapsed" {% endblock %}
+
+
+{% block content %}
+{% load static %}
+
+<!-- ========== tab components start ========== -->
+<section class="tab-components">
+    <div class="container-fluid">
+      <!-- ========== title-wrapper start ========== -->
+      <div class="title-wrapper pt-30">
+
+
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <div class="title mb-30">
+              <h2>Modifier Pensee</h2>
+            </div>
+          </div>
+          
+          <!-- end col -->
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- ========== title-wrapper end ========== -->
+
+      <!-- ========== form-elements-wrapper start ========== -->
+      <div class="form-elements-wrapper">
+        <div class="row">
+          <div class="col-lg-12">
+            <!-- input style start -->
+            <div class="card-style mb-30">
+              <h6 class="mb-25">Modifier Pensee Biblique</h6>
+                <form action="{% url 'dash:edit_pens_b' pns_b.id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="input-style-1 col-lg-6">
+                            <label>Titre</label>
+                            <input required type="text" value="{{ pns_b.titre }}" placeholder="saisir le titre..." id="titre" name="titre" />
+                        </div>
+                        
+                        <div class="input-style-1 col-lg-6">
+                            <label>Lien YouTube</label>
+                            <input type="text" placeholder="saisir le lien YouTube..." value="{{ pns_b.lien_youtube }}" id="lien_youtube" name="lien_youtube" />
+                        </div>
+
+                        <div class="select-style-1">
+                            <label>Theme</label>
+                            <div class="select-position">
+                              <select name="theme" required>
+                                <option value={{ pns_b.theme.id }} disabled selected hidden>{{ pns_b.theme }}</option>
+                                {% for themes in themes %}
+                                  <option required value="{{ themes.id }}">{{ themes.theme }}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                        </div>
+
+                        <div class="input-style-1 col-lg-12">
+                            <label>Contenu</label>
+                            <textarea name="contenu" placeholder="Contenu" rows="5">{{ pns_b.contenu }}</textarea>
+                        </div>
+                    </div>
+                    <!-- end input -->
+                    <div style="text-align: right;">
+                        <button name="form_mod_edit_pns_b" class="main-btn success-btn rounded-full btn-hover" style="text-align: center;">
+                            Modifier
+                        </button>
+                    </div>
+                </form>
+              <!-- end input -->
+            </div>
+            <!-- end card -->
+            <!-- ======= input style end ======= -->
+          </div>
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- ========== form-elements-wrapper end ========== -->
+    </div>
+    <!-- end container -->
+  </section>
+<!-- ========== tab components end ========== -->
+
+{% endblock %}

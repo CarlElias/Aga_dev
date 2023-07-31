@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST
 import re
 import traceback
 from django.http import JsonResponse
-
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -29,7 +29,7 @@ def logout_view(Request):
 def template(Request):
     return render(Request, 'dash/template.html')
 
-#----------------------------------------------------------------> Gestion des utilisateurs
+#----------------------------------------------------------------> Gestion des messages
 
 @user_passes_test(lambda u: u.is_superuser or u.is_staff)
 def msg(Request):
@@ -156,13 +156,21 @@ def ajouter_et_b(Request):
     titre = Request.POST.get('titre')
     sous_titre = Request.POST.get('sous_titre')
     contenu = Request.POST.get('contenu')
+    verset = Request.POST.get('verset')
+    lien_yt = Request.POST.get('lien_yt')
     
     # Gestion des retours à la ligne et des espaces
     #-->contenu = contenu.replace('\n', '<br>')  # Remplace les retours à la ligne par des balises <br>
     #-->contenu = contenu.replace('  ', '&nbsp;&nbsp;')  # Remplace les espaces doubles par des balises &nbsp;
     
+    if lien_yt == "":
+        video_id = ""
+    else:
+        # Récupère l'ID de la vidéo YouTube
+        video_id = re.findall(r"v=([A-Za-z0-9_-]{11})", lien_yt)[0]
+
     # Crée une instance d'étude biblique
-    etude = etude_biblique.objects.create(titre=titre, sous_titre=sous_titre, contenu=contenu)
+    etude = etude_biblique.objects.create(titre=titre, sous_titre=sous_titre, contenu=contenu, verset=verset, lien_yt=video_id)
     #typ_a = type_annonce(nom_type_annonce=nom_type_annonce)
     #typ_a.save()
 
@@ -189,11 +197,16 @@ def edit_etude_b(Request, id):
         titre = Request.POST.get('titre')
         sous_titre = Request.POST.get('sous_titre')
         contenu = Request.POST.get('contenu')
+        verset = Request.POST.get('verset')
+        lien_yt = Request.POST.get('lien_yt')
+        
         
         # appliquer les modification
         etude = etude_biblique.objects.get(id=id)
         etude.titre = titre
         etude.sous_titre = sous_titre
+        etude.verset = verset
+        etude.lien_yt = lien_yt
         etude.contenu = contenu
         etude.save()
         
@@ -211,6 +224,62 @@ def edit_etude_b(Request, id):
     # Créer une liste de valeurs des thèmes associés
     themes_values = [theme.id for theme in et_b_themes]
     return render(Request, 'dash/modification/edit_et_b.html', {'et_b':et_b, 'themes':themes, 'themes_values': themes_values})
+
+#----------------------------------------------------------------> Pensee Biblique
+
+@user_passes_test(lambda u: u.is_superuser or u.is_staff)
+def pens_b(Request):
+    pns_b = pensee_biblique.objects.all()
+    themes = theme_biblique.objects.all()
+    return render(Request, 'dash/pense_b.html',  {'pns_b':pns_b, 'themes':themes}) 
+
+@require_POST
+def ajouter_pens_b(Request):
+    titre = Request.POST.get('titre')
+    contenu = Request.POST.get('contenu')
+    lien_youtube = Request.POST.get('lien_youtube')
+    theme = Request.POST.get('theme')
+    
+    if lien_youtube == "":
+        video_id = ""
+    else:
+        # Récupère l'ID de la vidéo YouTube
+        video_id = re.findall(r"v=([A-Za-z0-9_-]{11})", lien_youtube)[0]
+        
+    pensee = pensee_biblique.objects.create(titre=titre, contenu=contenu, lien_youtube=video_id, theme_id=theme)
+
+    messages.success(Request, "Pensee ajouter avec success !" )
+    return redirect('dash:pens_b')
+
+@require_POST
+def supprimer_pens_b(Request, id):
+    pns_b = get_object_or_404(pensee_biblique, id=id)
+    pns_b.delete()
+    messages.success(Request, "Suppresion effectué avec succes !" )
+    #faire un return redirect
+    return redirect('dash:pens_b')
+
+@require_POST
+def edit_pens_b(Request, id):
+    if 'form_mod_edit_pns_b' in Request.POST and Request.method=='POST':
+        titre = Request.POST.get('titre')
+        contenu = Request.POST.get('contenu')
+        lien_youtube = Request.POST.get('lien_youtube')
+        theme = Request.POST.get('theme')
+            
+        # appliquer les modification
+        pens_b = pensee_biblique.objects.get(id=id)
+        pens_b.titre = titre
+        pens_b.contenu = contenu
+        pens_b.lien_youtube = lien_youtube
+        pens_b.theme_id = theme
+        pens_b.save()
+        
+        messages.success(Request, "Pensee Bilique modifier avec success !" )
+        return redirect('dash:pens_b')
+    pns_b = get_object_or_404(pensee_biblique, id=id)
+    themes = theme_biblique.objects.all()
+    return render(Request, 'dash/modification/edit_p.html', {'pns_b':pns_b, 'themes':themes})
 
 #----------------------------------------------------------------> lifestyle
 
@@ -285,9 +354,131 @@ def edit_lif(Request, id):
 #----------------------------------------------------------------> Annonce
 
 @user_passes_test(lambda u: u.is_superuser or u.is_staff)
-def annonce(Request):
-    return render(Request, 'dash/annonce.html')
+def ann(Request):
+    annonces = annonce.objects.order_by('-date_ajout')
+    ty_a = type_annonce.objects.all()
+    return render(Request, 'dash/annonce.html', {'annonces':annonces, 'ty_a':ty_a})
 
+@require_POST
+def aj_ann(Request):
+    type_annonces = Request.POST.get('type_annonce')
+    titre = Request.POST.get('titre')
+    txt_annonce = Request.POST.get('txt_annonce')
+    image_annonce = Request.FILES.get('image_annonce')
+    #theme = Request.POST.get('theme')
+    
+    type_annonce_obj = type_annonce.objects.get(pk=type_annonces)
+    
+    # Crée une instance de lifestyle et inserer dans la bd
+    ann = annonce.objects.create(titre=titre, type_annonce=type_annonce_obj, image_annonce=image_annonce, txt_annonce=txt_annonce)
+    ann.save()
+    
+    messages.success(Request, "Annonce Enregistrée avec success !" )
+    return redirect('dash:ann')
+
+@require_POST
+def edit_ann(Request, id):
+    if 'form_mod_edit_ann' in Request.POST and Request.method=='POST':
+        type_annonces = Request.POST.get('type_annonce')
+        titre = Request.POST.get('titre')
+        txt_annonce = Request.POST.get('txt_annonce')
+        image_annonce = Request.FILES.get('image_annonce')
+        type_annonce_obj_hidden = Request.POST.get('type_annonce_hidden')
+        
+        #type_annonce_obj = type_annonce.objects.get(pk=type_annonces)
+        
+        annon = annonce.objects.get(id=id)
+        id_ty_ann = annon.type_annonce
+        """
+        print(annon)
+        print(id_ty_ann)
+        print(type(id_ty_ann))
+        print('-------')
+        """
+        
+        if type_annonces is None:
+            type_annonce_obj = id_ty_ann
+        else:
+            type_annonce_obj = type_annonce.objects.get(pk=type_annonces)          
+
+        #print(type_annonce_obj)
+        #print(type(type_annonce_obj))
+        
+        
+        #appliquer les modification en mettant une conditaion pour image si null
+        Ann = annonce.objects.get(id=id)
+        Ann.titre = titre
+        if image_annonce:
+            Ann.image_annonce.delete()
+            Ann.image_annonce = image_annonce
+        Ann.txt_annonce = txt_annonce
+        Ann.type_annonce = type_annonce_obj
+        Ann.save()
+        
+        
+        messages.success(Request, "Anonnce modifier avec success !" )
+        return redirect('dash:ann')
+    an = get_object_or_404(annonce, id=id)
+    ty_a = type_annonce.objects.all()
+    return render(Request, 'dash/modification/edit_ann.html', {'an':an, 'ty_a':ty_a})
+        
+
+@require_POST
+def supprimer_ann(Request, id):
+    #supprimer le l'annonce de l'id et en supprimant, supprimer aussi l'image enregistrer 
+    ann = get_object_or_404(annonce, id=id)
+    ann.image_annonce.delete()
+    ann.delete()
+
+    messages.success(Request, "Suppresion effectué avec succes !" )
+    #faire un return redirect
+    return redirect('dash:ann')
+
+#----------------------------------------------------------------> Solidarity Chain
+
+@user_passes_test(lambda u: u.is_superuser or u.is_staff)
+def sld(Request):
+    sld_ch = sld_chain.objects.order_by('-date_ajout')
+    return render(Request, 'dash/sld_chain.html', {'sld_ch':sld_ch})
+
+def aj_sld_chain(Request):
+    titre = Request.POST.get('titre')
+    montant = Request.POST.get('montant')
+    type_annonce = "Solidarity Chain"
+    
+    # Crée une instance de lifestyle et inserer dans la bd
+    sl = sld_chain.objects.create(titre=titre, type_annonce=type_annonce, montant=montant)
+    sl.save()
+    
+    messages.success(Request, "Solidarity Chain Enregistrée avec success !" )
+    return redirect('dash:sld_chain')
+
+@require_POST
+def edit_sld_chain(Request, id):
+    if 'form_mod_edit_sld' in Request.POST and Request.method=='POST':
+        titre = Request.POST.get('titre')  
+        montant = Request.POST.get('montant')
+        
+        #modifier le theme de l'id 
+        objet = sld_chain.objects.get(id=id)
+        objet.titre = titre
+        objet.montant = montant
+        objet.save()
+        
+        messages.success(Request, "Solidarity Chain modifier avec success !" )
+        return redirect('dash:sld_chain')
+    sl = get_object_or_404(sld_chain, id=id)
+    return render(Request, 'dash/modification/edit_sld_chain.html', {'sl':sl})
+
+@require_POST
+def supprimer_sld_ch(Request, id):
+    #supprimer le l'annonce de l'id et en supprimant, supprimer aussi l'image enregistrer 
+    sl = get_object_or_404(sld_chain, id=id)
+    sl.delete()
+
+    messages.success(Request, "Suppresion effectué avec succes !" )
+    #faire un return redirect
+    return redirect('dash:sld_chain')
 
 #----------------------------------------------------------------> Type Theme Biblique
 @user_passes_test(lambda u: u.is_superuser or u.is_staff)
@@ -409,14 +600,12 @@ def mdp_change(Request, id):
 
 #----------------------------------------------------------------> Commentaire
 
-@require_POST
-def supprimer_commentaire(Request, id):
-    pass
-
 @user_passes_test(lambda u: u.is_superuser or u.is_staff)
-def commentaire(request):
+def commentaire(Request):
     #recuper tout de la table comment sauf les element dont status=validé
-    comments = comment.objects.exclude(statut='validé').order_by('-date_ajout')
+    comments = comment.objects.exclude(statut='validé').order_by('date_ajout').filter(table="lifestyle")
+    #comments = comment.objects.exclude(statut='validé').order_by('date_ajout').filter(table="lifestyle")
+    
     for com in comments:
         com.user = User.objects.get(id=com.user_id)
 
@@ -432,10 +621,73 @@ def commentaire(request):
             com.titre_sujet = sujet.titre
 
     context = {'comments': comments}
-    return render(request, 'dash/comment.html', context)
+    return render(Request, 'dash/comment.html', context)
+
+    
+    """
+    #en cas de gestion de tout les commentaires 
+    @user_passes_test(lambda u: u.is_superuser or u.is_staff)
+    def commentaire(request):
+        #recuper tout de la table comment sauf les element dont status=validé
+        comments = comment.objects.exclude(statut='validé').order_by('-date_ajout')
+        for com in comments:
+            com.user = User.objects.get(id=com.user_id)
+
+            # Récupérer le titre du sujet en fonction de la table et de l'id_sujet
+            if com.table == 'lifestyle':
+                sujet = lifestyle.objects.get(id=com.id_sujet)
+                com.titre_sujet = sujet.titre
+            elif com.table == 'pensee_biblique':
+                sujet = pensee_biblique.objects.get(id=com.id_sujet)
+                com.titre_sujet = sujet.titre
+            elif com.table == 'etude_biblique':
+                sujet = etude_biblique.objects.get(id=com.id_sujet)
+                com.titre_sujet = sujet.titre
+
+        context = {'comments': comments}
+        return render(request, 'dash/comment.html', context)
+    """
+
+@user_passes_test(lambda u: u.is_superuser)
+def update_statut(request):
+    #dans le fichier html, j'ai un code ajax qui est sensé envoye a la view un dictionnaire data contenant les valeurs comment_id et statut, ecris le code recuperation des donnes dans le dictionnaire data 
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        comment_id = request.POST.get('comment_id')
+        statut = request.POST.get('statut')
+        
+        #print(comment_id)
+        #print(statut)
+        
+        # Utilisez les valeurs comment_id et statut pour effectuer les opérations nécessaires
+        try:
+            comment_obj = comment.objects.get(id=comment_id)
+            
+            # Convertir la valeur booléenne en chaîne de caractères "validé" ou "non-validé"
+            comment_obj.statut = 'validé' if statut == 'true' else 'non-validé'
+            
+            comment_obj.save()
+            
+            return JsonResponse({'success': True})
+        except comment.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Le commentaire n\'existe pas.'})
+        except Exception as e:
+            erreur = traceback.format_exc()
+            return JsonResponse({'success': False, 'error': erreur})
+
+    return JsonResponse({'success': False, 'error': 'Requête invalide.'})
+    
+@require_POST
+def supprimer_commentaire(Request, id):
+    comments = get_object_or_404(comment, id=id)
+    comments.delete()
+    messages.success(Request, "Suppresion effectué avec succes !" )
+    #faire un return redirect
+    return redirect('dash:comment')
 
 @user_passes_test(lambda u: u.is_superuser or u.is_staff)
 def commentaire_st(request):
+    pass
+    """
     #recuper tout de la table comment sauf les element dont status=validé
     comments = comment.objects.exclude(statut='validé').order_by('statut', '-date_ajout')
     for com in comments:
@@ -454,9 +706,12 @@ def commentaire_st(request):
 
     context = {'comments': comments}
     return render(request, 'dash/comment-status.html', context)
+    """
 
 @user_passes_test(lambda u: u.is_superuser or u.is_staff)
 def commentaire_cat(request):
+    pass
+    """
     #recuper tout de la table comment sauf les element dont status=validé
     comments = comment.objects.exclude(statut='validé').order_by('table', '-date_ajout')
     for com in comments:
@@ -475,6 +730,7 @@ def commentaire_cat(request):
 
     context = {'comments': comments}
     return render(request, 'dash/comment-cate.html', context)
+    """
 
 
     

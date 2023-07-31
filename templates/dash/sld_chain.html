@@ -1,0 +1,177 @@
+{% extends "dash/master.html" %}
+
+{% block titre %}
+    <title>Admin | Solidarity Chain</title>
+{% endblock %}
+
+{% block active_sld_chain %} class="active" {% endblock %}
+{% block show_annonce %} show {% endblock %}
+
+{% block coll_dash %} class="collapsed" {% endblock %}
+{% block coll_typ_th_b %} class="collapsed" {% endblock %}
+{% block coll_bibilque %} class="collapsed" {% endblock %}
+
+{% block content %}
+{% load static %}
+
+<!-- ========== tab components start ========== -->
+<section class="tab-components">
+    <div class="container-fluid">
+      <!-- ========== title-wrapper start ========== -->
+      <div class="title-wrapper pt-30">
+
+
+        {% if messages %}
+            <div class="alert-box success-alert pl-100">
+                <button style="border: none;" class="close-btn" onclick="closeAlert()">
+                    <div class="left">
+                        <h5 class="text-bold">X</h5>
+                    </div>
+                </button>
+                <div class="alert">
+                    <p class="text-medium">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </p>
+                </div>
+                
+            </div>
+        {% endif %}
+
+
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <div class="title mb-30">
+              <h2>Annonce : Solidarity Chain</h2>
+            </div>
+          </div>
+          
+          <!-- end col -->
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- ========== title-wrapper end ========== -->
+
+      <!-- ========== form-elements-wrapper start ========== -->
+      <div class="form-elements-wrapper">
+        <div class="row">
+          <div class="col-lg-12">
+            <!-- input style start -->
+            <div class="card-style mb-30">
+              <h6 class="mb-25">Ajout d'une solidarity Chain'</h6>
+                <form action="{% url 'dash:aj_sld_chain' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="input-style-1 col-lg-6">
+                            <label>Titre</label>
+                            <input required type="text" placeholder="saisir le titre..." id="titre" name="titre" />
+                        </div>
+
+                        <div class="input-style-1 col-lg-6">
+                            <label>Montant</label>
+                            <input required type="text" placeholder="saisir le montant" id="montant" name="montant" />
+                        </div>
+                        
+                    </div>
+                    <!-- end input -->
+                    <div style="text-align: right;">
+                        <button class="main-btn success-btn rounded-full btn-hover" style="text-align: center;">
+                            Enregistrer
+                        </button>
+                    </div>
+                </form>
+              <!-- end input -->
+            </div>
+            <!-- end card -->
+            <!-- ======= input style end ======= -->
+          </div>
+        </div>
+        <!-- end row -->
+
+        <!-- table -->
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card-style mb-30">
+              <h6 class="mb-10">Annonce Disponibles sur le site</h6>
+              <p class="text-sm mb-20">
+                
+              </p>
+              <div class="table-wrapper table-responsive">
+                <table class="table striped-table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th><h6>Titre</h6></th>
+                      <th><h6>Montant</h6></th>
+                      <th><h6>Type d'annonce</h6></th>
+                      <th><h6>Date d'ajout</h6></th>
+                      <th><h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action</h6></th>
+                    </tr>
+                    
+                  </thead>
+                  <tbody>
+                      {% for sld_ch in sld_ch %}
+                      <tr>
+                          <td>
+                              &nbsp;&nbsp;
+                          </td>
+                          <td>
+                              <p>
+                                {{ sld_ch.titre }}
+                              </p>
+                          </td>
+                          <td>
+                            <p>
+                              {{ sld_ch.montant }} F CFA
+                            </p>
+                          </td>
+                          <td>
+                              <p>
+                                {{ sld_ch.type_annonce }}
+                              </p>
+                          </td>
+                          <td>
+                          <p> {{ sld_ch.date_ajout|date:"l d F Y" }} {{ sld_ch.date_ajout|time:"H:i" }} </p>
+                          </td>
+                          <td>
+                          <div class="action">
+                              
+                              <form action="{% url 'dash:edit_sld_chain' sld_ch.id %}" method="post" enctype="multipart/form-data">
+                                  {% csrf_token %}
+                                    <button class="edit" name="form_sld_ch_b">
+                                      <i class="lni lni-pencil"></i>
+                                    </button>
+                              </form> 
+
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                              <form action="{% url 'dash:supprimer_sld_ch' sld_ch.id %}" method="post" enctype="multipart/form-data">
+                                  {% csrf_token %}
+                                  <button class="text-danger">
+                                      <i class="lni lni-trash-can"></i>
+                                  </button>
+                              </form> 
+                          </div>
+                          </td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+                </table>
+               
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end table -->
+      </div>
+      <!-- ========== form-elements-wrapper end ========== -->
+    </div>
+    <!-- end container -->
+  </section>
+<!-- ========== tab components end ========== -->
+
+
+
+
+{% endblock %}

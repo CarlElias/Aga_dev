@@ -16,50 +16,8 @@
             display: block;
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-      function closeAlert() {
-          var alertBox = document.querySelector('.alert-box');
-          alertBox.style.display = 'none';
-      }
-
-      const etudeTitres = document.querySelectorAll('.etude-titre');
-      etudeTitres.forEach(etudeTitre => {
-          etudeTitre.addEventListener('mousemove', e => {
-              const hoverContent = etudeTitre.nextElementSibling;
-              hoverContent.style.top = `${e.clientY}px`;
-              hoverContent.style.left = `${e.clientX}px`;
-          });
-      });
 
 
-      $(document).ready(function() {
-          $('.form-check-input').on('click', function() {
-            var commentId = $(this).data('user-id');
-            var isChecked = $(this).prop('checked');
-      
-            // Effectuer la requête AJAX pour mettre à jour la permission is_staff avec token csrf
-            $.ajax({
-              url: "{% url 'dash:update_statut' %}",
-              type: 'POST',
-              data: {
-                comment_id: commentId,
-                statut: isChecked ? 'true' : 'false',
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-              },
-              success: function(response) {
-                console.log('Mise à jour du statut.');
-                // Rafraîchir automatiquement la page après la mise à jour réussie
-                location.reload();
-              },
-              error: function(xhr, errmsg, err) {
-                console.log('Erreur lors de la mise à jour du statut.');
-                // Traiter l'erreur si nécessaire
-              }
-            });
-          });
-      });
-    </script>
       
 {% endblock %}
 
@@ -77,41 +35,6 @@
         <div class="container-fluid">
           <!-- ========== title-wrapper start ========== -->
           <div class="title-wrapper pt-30">
-
-
-
-
-
-
-            {% if messages %}
-                <div class="alert-box success-alert pl-100">
-                    <button style="border: none;" class="close-btn" onclick="closeAlert()">
-                        <div class="left">
-                            <h5 class="text-bold">X</h5>
-                        </div>
-                    </button>
-                    <div class="alert">
-                        <p class="text-medium">
-                            {% for message in messages %}
-                                {{ message }}
-                            {% endfor %}
-                        </p>
-                    </div>
-                    
-                </div>
-            {% endif %}
-
-
-
-
-
-
-
-
-
-
-
-
             <div class="row align-items-center">
               <div class="col-md-6">
                 <div class="title mb-30">
@@ -183,21 +106,21 @@
                           <th><h6>Utilisateurs</h6></th>
                           <th><h6>Sujet</h6></th>
                           <th><h6>Categorie</h6></th>
+                          <th><h6>Pré-validé</h6></th>
                           <th><h6>Validé</h6></th>
-                          <th><h6>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Status</h6></th>
-                          <th><h6>Date</h6></th>
+                          <th><h6>Status</h6></th>
                           <th><h6>Action</h6></th>
                         </tr>
-                        <!-- end table row -->
+                        <!-- end table row-->
                       </thead>
-                     
                       <tbody id="commentaire-body">
                         {% for com in comments %}
                         <tr>
                           <td>
-                            <p><b>{{ com.user.username }}</b></p>
+                            <p>{{ com.user.username }}</p>
                           </td>
                           <td class="min-width">
+                            
                             <p class="etude-titre">{{ com.titre_sujet  }}</p>
                             <div class="hover-content">
                                 <p>{{ com.contenu }}</p>
@@ -206,19 +129,20 @@
                           <td class="min-width">
                             <p>{{ com.table }}</p>
                           </td>
-
                           <td>
-                            <div class="check-input-primary">&nbsp;&nbsp;
-                                <input
-                                class="form-check-input"
-                                type="checkbox"
-                                id="checkbox-{{ forloop.counter }}"
-                                data-user-id="{{ com.id }}"
+                            <div class="check-input-primary">
+                                <input class="form-check-input" type="checkbox"
+                                {% if com.statut == "pre-validé" %}checked{% endif %}
+                                />
+                            </div>
+                          </td>
+                          <td>
+                            <div class="check-input-primary">
+                                <input class="form-check-input" type="checkbox"
                                 {% if com.statut == "validé" %}checked{% endif %}
                                 />
                             </div>
                           </td>
-                    
                           <td class="min-width">
                             {% if com.statut == "validé" %}
                                 <div class="status">
@@ -235,9 +159,7 @@
                                     <span class="status-btn close-btn">{{ com.statut }}</span>
                                 </div>
                             {% endif %}
-                          </td>
-                          <td class="min-width">
-                            <p>{{ com.date_ajout|date:"l d F Y" }}</p>
+                            
                           </td>
                           <td>
                             <div class="action">
@@ -254,7 +176,6 @@
                         </tr>
                         {% endfor %}
                       </tbody>
-                    
                     </table>
                     <!-- end table -->
                   </div>

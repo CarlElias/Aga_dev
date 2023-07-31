@@ -30,8 +30,21 @@ urlpatterns = [
     path('ajouter_et_b', ajouter_et_b, name="ajouter_et_b"),
     path('edit-etude-biblique/<int:id>', edit_etude_b, name="edit_etude_b"),
     path('supprimer-etude-biblique/<int:id>', supprimer_etude_b, name="supprimer_etude_b"),
+#-------------------------------------------------------------------->Pensée Biblique
+    path('pensee-biblique', pens_b, name="pens_b"),
+    path('ajouter_pens_b', ajouter_pens_b, name="ajouter_pens_b"),
+    path('edit-pensee-biblique/<int:id>', edit_pens_b, name="edit_pens_b"),
+    path('supprimer-pensee-biblique/<int:id>', supprimer_pens_b, name="supprimer_pens_b"),
 #-------------------------------------------------------------------->Annonce
-    path('Annonce', annonce, name="ann"),
+    path('Annonce', ann, name="ann"),
+    path('Ajouter-Annonce', aj_ann, name="ajouter_ann"),
+    path('edit-Annonce/<int:id>', edit_ann, name="edit_ann"),
+    path('supprimer-Annonce/<int:id>', supprimer_ann, name="supprimer_ann"),
+#-------------------------------------------------------------------->Solidarity Chain
+    path('Solidarity-chain', sld, name="sld_chain"),
+    path('Ajouter-Solidarity-chain', aj_sld_chain, name="aj_sld_chain"),
+    path('edit-solidarity-chain/<int:id>', edit_sld_chain, name="edit_sld_chain"),
+    path('supprimer-Solidarity-chain/<int:id>', supprimer_sld_ch, name="supprimer_sld_ch"),
 #-------------------------------------------------------------------->Type
     path('type-theme-biblique', typ_th_b, name='typ_th_b'),
     path('ajouter_th_b', ajouter_th_b, name="ajouter_th_b"),
@@ -48,9 +61,11 @@ urlpatterns = [
     path('Parametre-user-delete/<int:id>', mdp_change, name="mdp_change"),
     #-------------------------------------------------------------------->Commentaire
     path('commentaire', commentaire, name="comment"),
-    path('commentaire-status', commentaire_st, name="comment_st"),
-    path('commentaire-catgerie', commentaire_cat, name="comment_cat"),
+    path('update-statut/',update_statut, name='update_statut'),
     path('supprimer-commentaire/<int:id>', supprimer_commentaire, name="supprimer_commentaire"),
+    
+    path('commentaire-status', commentaire_st, name="comment_st"),
+    path('commentaire/categorie', commentaire_cat, name="comment_cat"),
     
     
 ]

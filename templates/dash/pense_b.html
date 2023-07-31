@@ -1,7 +1,7 @@
 {% extends "dash/master.html" %}
 
 {% block titre %}
-    <title>Admin | LifeStyle</title>
+    <title>Admin | Pensée Biblique</title>
     <style>
         .hover-content {
             display: none;
@@ -15,21 +15,6 @@
         .etude-titre:hover + .hover-content {
             display: block;
         }
-        .image {
-            border-radius: 4px;
-            overflow: hidden;
-            margin-right: 15px;
-            max-width: 50px;
-            width: 100%;
-            height: 50px;
-        }
-    
-        .image img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        
     </style>
     <script>
         function closeAlert() {
@@ -48,12 +33,12 @@
     </script>
 {% endblock %}
 
-{% block active_lifS %} active {% endblock %}
-{% block active_etude_b %} {% endblock %}
+{% block active_pens_b %} class="active" {% endblock %}
+{% block show_etude %} show {% endblock %}
 {% block coll_dash %} class="collapsed" {% endblock %}
 {% block coll_typ_th_b %} class="collapsed" {% endblock %}
-{% block coll_bibilque %} class="collapsed" {% endblock %}
 {% block coll_ann %} class="collapsed" {% endblock %}
+
 
 {% block content %}
 {% load static %}
@@ -87,7 +72,7 @@
         <div class="row align-items-center">
           <div class="col-md-6">
             <div class="title mb-30">
-              <h2>LifeStyle</h2>
+              <h2>Pensee Biblique</h2>
             </div>
           </div>
           
@@ -103,8 +88,8 @@
           <div class="col-lg-12">
             <!-- input style start -->
             <div class="card-style mb-30">
-              <h6 class="mb-25">Ajout LifeStyle</h6>
-                <form action="{% url 'dash:ajouter_lif' %}" method="post" enctype="multipart/form-data">
+              <h6 class="mb-25">Ajout d'une Pensee Biblique</h6>
+                <form action="{% url 'dash:ajouter_pens_b' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row">
                         <div class="input-style-1 col-lg-6">
@@ -113,28 +98,19 @@
                         </div>
                         
                         <div class="input-style-1 col-lg-6">
-                            <label>Image</label>
-                            <!-- input pour type=files  -->
-                            <input type="file" id="image" name="image" required>
+                            <label>Lien YouTube</label>
+                            <input type="text" placeholder="saisir le lien YouTube..." id="lien_youtube" name="lien_youtube" />
                         </div>
 
-                        <div class="card-style mb-30">
-                            <h6 style="font-size: 14px;" class="mb-25">Les thèmes</h6>
-                            <div class="row">
+                        <div class="select-style-1">
+                            <label>Theme</label>
+                            <div class="select-position">
+                              <select name="theme">
+                                <option value disabled selected hidden>Select category</option>
                                 {% for theme in themes %}
-                                    <div class="form-check checkbox-style col-lg-4">
-                                    <input
-                                        class="form-check-input"
-                                        type="checkbox"
-                                        name="themes"
-                                        value="{{ theme.id }}"
-                                        id="theme-{{ theme.id }}"
-                                    />
-                                    <label class="form-check-label" for="theme-{{ theme.id }}">
-                                        {{ theme.theme }}</label
-                                    >
-                                    </div>
+                                  <option value="{{ theme.id }}">{{ theme.theme }}</option>
                                 {% endfor %}
+                              </select>
                             </div>
                         </div>
 
@@ -158,11 +134,10 @@
         </div>
         <!-- end row -->
 
-        <!-- table -->
         <div class="row">
             <div class="col-lg-12">
               <div class="card-style mb-30">
-                <h6 class="mb-10">LifeStyle Disponibles sur le site</h6>
+                <h6 class="mb-10">Etudes Disponibles sur le site</h6>
                 <p class="text-sm mb-20">
                   
                 </p>
@@ -171,7 +146,6 @@
                     <thead>
                       <tr>
                         <th></th>
-                        <th><h6 class="text-sm text-medium"> </h6></th>
                         <th><h6>Titre</h6></th>
                         <th><h6>Themes</h6></th>
                         <th><h6>Date d'ajout</h6></th>
@@ -180,43 +154,29 @@
                       <!-- end table row-->
                     </thead>
                     <tbody>
-                        {% for lifes in lifes %}
+                        {% for pns_b in pns_b %}
                         <tr>
                             <td>
                                 &nbsp;&nbsp;
                             </td>
                             <td>
-                                <div class="product">
-                                    <div class="image">
-                                      <img
-                                        src="{% static lifes.image %}"
-                                        alt=""
-                                      />
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <p class="etude-titre">{{ lifes.titre }}</p>
+                                <p class="etude-titre">{{ pns_b.titre }}</p>
                                 <div class="hover-content">
-                                    <p>{{ lifes.contenu }}</p>
+                                    <p>{{ pns_b.contenu }}</p>
                                 </div>
                             </td>
                             <td>
                                 <p>
-                                    {% for theme in lifes.themes.all %}
-
-                                        {{ theme }}, 
-
-                                    {% endfor %}
+                                    {{ pns_b.theme }}
                                 </p>
                             </td>
                             <td>
-                            <p> {{ lifes.date_ajout|date:"l d F Y" }} {{ lifes.date_ajout|time:"H:i" }} </p>
+                            <p> {{ pns_b.date_ajout|date:"l d F Y" }} {{ pns_b.date_ajout|time:"H:i" }} </p>
                             </td>
                             <td>
                             <div class="action">
                                 
-                                <form action="{% url 'dash:edit_lif' lifes.id %}" method="post" enctype="multipart/form-data">
+                                <form action="{% url 'dash:edit_pens_b' pns_b.id %}" method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
                                       <button class="edit" name="form_edit_etude_b">
                                         <i class="lni lni-pencil"></i>
@@ -225,7 +185,7 @@
 
                                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                                <form action="{% url 'dash:supprimer_lif' lifes.id %}" method="post" enctype="multipart/form-data">
+                                <form action="{% url 'dash:supprimer_pens_b' pns_b.id %}" method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <button class="text-danger">
                                         <i class="lni lni-trash-can"></i>
@@ -244,7 +204,6 @@
             </div>
             <!-- end col -->
         </div>
-        <!-- end table -->
       </div>
       <!-- ========== form-elements-wrapper end ========== -->
     </div>

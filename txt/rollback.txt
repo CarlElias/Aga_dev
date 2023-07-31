@@ -1,0 +1,12 @@
+Oui, il est possible de faire des rollbacks (ou des annulations) des migrations dans Django.
+
+Pour revenir en arrière sur une migration spécifique, vous pouvez utiliser la commande python manage.py migrate <app_label> <migration_name> en remplaçant <app_label> par le nom de votre application et <migration_name> par le nom de la migration vers laquelle vous souhaitez revenir.
+
+Par exemple, si vous voulez annuler la dernière migration de votre application "myapp", 
+vous pouvez exécuter la commande suivante :
+
+------> python manage.py migrate myapp 0002 ("zero" a la place de 000 si c'est premier migrate)
+
+Cela annulera la migration 0002 de votre application "myapp" et ramènera votre base de données à l'état précédent.
+
+Il est important de noter que faire des rollbacks peut entraîner des problèmes de cohérence de données si vous avez déjà ajouté des données à votre base de données. Assurez-vous donc de sauvegarder vos données importantes avant de faire des rollbacks.

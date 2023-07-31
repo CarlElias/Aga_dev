@@ -43,6 +43,9 @@ class AdminPriere_louange(admin.ModelAdmin):
 class messageAdmin(admin.ModelAdmin):
     list_display = ('nom','email','objet','contact','contenu','date_ajout')
     
+class sld_chainAdmin(admin.ModelAdmin):
+    list_display = ('titre','montant','date_ajout')
+    
 admin.site.register(type_annonce, AdminType_annonce)
 admin.site.register(theme_biblique, AdminTheme_biblique)
 admin.site.register(quote, AdminQuote)
@@ -54,3 +57,4 @@ admin.site.register(pensee_biblique, AdminePensee_biblique)
 admin.site.register(comment, CommentAdmin)
 admin.site.register(priere_louange, AdminPriere_louange)
 admin.site.register(message, messageAdmin)
+admin.site.register(sld_chain, sld_chainAdmin)

@@ -119,7 +119,7 @@
                 <a href="{% url 'dash:etude_b' %}" {% block active_etude_b %}{% endblock %}> Etude Biblique </a>
               </li>
               <li>
-                <a href="blank-page.html"> Pensée Biblique </a>
+                <a href="{% url 'dash:pens_b' %}" {% block active_pens_b %}{% endblock %}> Pensée Biblique </a>
               </li>
             </ul>
           </li>
@@ -144,7 +144,7 @@
                 <a href="{% url 'dash:ann' %}" {% block active_ann %}{% endblock %}> Annonce </a>
               </li>
               <li>
-                <a href="blank-page.html"> Solidarity Chain </a>
+                <a href="{% url 'dash:sld_chain' %}" {% block active_sld_chain %}{% endblock %}> Solidarity Chain </a>
               </li>
             </ul>
           </li>
